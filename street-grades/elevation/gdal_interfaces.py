@@ -9,6 +9,7 @@ from rtree import index
 # Originally based on https://stackoverflow.com/questions/13439357/extract-point-from-raster-in-gdal
 class GDALInterface(object):
     SEA_LEVEL = 0
+
     def __init__(self, tif_path):
         super(GDALInterface, self).__init__()
         self.tif_path = tif_path
@@ -19,10 +20,10 @@ class GDALInterface(object):
         lrx = ulx + (self.src.RasterXSize * xres)
         lry = uly + (self.src.RasterYSize * yres)
         return {
-            'TOP_LEFT': (ulx, uly),
-            'TOP_RIGHT': (lrx, uly),
-            'BOTTOM_LEFT': (ulx, lry),
-            'BOTTOM_RIGHT': (lrx, lry),
+            "TOP_LEFT": (ulx, uly),
+            "TOP_RIGHT": (lrx, uly),
+            "BOTTOM_LEFT": (ulx, lry),
+            "BOTTOM_RIGHT": (lrx, lry),
         }
 
     def loadMetadata(self):
@@ -38,13 +39,19 @@ class GDALInterface(object):
         spatial_reference.ImportFromEPSG(4326)  # WGS84
 
         # coordinate transformation
-        self.coordinate_transform = osr.CoordinateTransformation(spatial_reference, spatial_reference_raster)
+        self.coordinate_transform = osr.CoordinateTransformation(
+            spatial_reference, spatial_reference_raster
+        )
         gt = self.geo_transform = self.src.GetGeoTransform()
-        dev = (gt[1] * gt[5] - gt[2] * gt[4])
-        self.geo_transform_inv = (gt[0], gt[5] / dev, -gt[2] / dev,
-                                  gt[3], -gt[4] / dev, gt[1] / dev)
-
-
+        dev = gt[1] * gt[5] - gt[2] * gt[4]
+        self.geo_transform_inv = (
+            gt[0],
+            gt[5] / dev,
+            -gt[2] / dev,
+            gt[3],
+            -gt[4] / dev,
+            gt[1] / dev,
+        )
 
     @lazy
     def points_array(self):
@@ -53,7 +60,6 @@ class GDALInterface(object):
 
     def print_statistics(self):
         print(self.src.GetRasterBand(1).GetStatistics(True, True))
-
 
     def lookup(self, lat, lon):
         try:
@@ -84,6 +90,7 @@ class GDALInterface(object):
 
     def __exit__(self, type, value, traceback):
         self.close()
+
 
 class GDALTileInterface(object):
     def __init__(self, tiles_folder, summary_file, open_interfaces_size=5):
@@ -119,28 +126,33 @@ class GDALTileInterface(object):
             return interface
 
     def _all_files(self):
-        return [f for f in listdir(self.tiles_folder) if isfile(join(self.tiles_folder, f)) and (f.endswith(u'.tif') or f.endswith(u'.hgt'))]
+        return [
+            f
+            for f in listdir(self.tiles_folder)
+            if isfile(join(self.tiles_folder, f))
+            and (f.endswith(u".tif") or f.endswith(u".hgt"))
+        ]
 
     def create_summary_json(self):
         all_coords = []
         for file in self._all_files():
 
-            full_path = join(self.tiles_folder,file)
+            full_path = join(self.tiles_folder, file)
             i = self._open_gdal_interface(full_path)
             coords = i.get_corner_coords()
             all_coords += [
                 {
-                    'file': full_path,
-                    'coords': ( coords['BOTTOM_RIGHT'][1],  # latitude min
-                                coords['TOP_RIGHT'][1],  # latitude max
-                                coords['TOP_LEFT'][0],  # longitude min
-                                coords['TOP_RIGHT'][0],  # longitude max
-
-                                )
+                    "file": full_path,
+                    "coords": (
+                        coords["BOTTOM_RIGHT"][1],  # latitude min
+                        coords["TOP_RIGHT"][1],  # latitude max
+                        coords["TOP_LEFT"][0],  # longitude min
+                        coords["TOP_RIGHT"][0],  # longitude max
+                    ),
                 }
             ]
 
-        with open(self.summary_file, 'w') as f:
+        with open(self.summary_file, "w") as f:
             json.dump(all_coords, f)
 
         self.all_coords = all_coords
@@ -158,16 +170,21 @@ class GDALTileInterface(object):
         nearest = list(self.index.nearest((lat, lng), 1, objects=True))
 
         if not nearest:
-            raise Exception('Invalid latitude/longitude')
+            raise Exception("Invalid latitude/longitude")
         else:
             coords = nearest[0].object
 
-            gdal_interface = self._open_gdal_interface(coords['file'])
+            gdal_interface = self._open_gdal_interface(coords["file"])
             return int(gdal_interface.lookup(lat, lng))
 
     def _build_index(self):
         index_id = 1
         for e in self.all_coords:
-            e['index_id'] = index_id
-            left, bottom, right, top = (e['coords'][0], e['coords'][2], e['coords'][1], e['coords'][3])
-            self.index.insert( index_id, (left, bottom, right, top), obj=e)
+            e["index_id"] = index_id
+            left, bottom, right, top = (
+                e["coords"][0],
+                e["coords"][2],
+                e["coords"][1],
+                e["coords"][3],
+            )
+            self.index.insert(index_id, (left, bottom, right, top), obj=e)
