@@ -2,7 +2,7 @@ import json
 
 from gdal_interfaces import GDALTileInterface
 
-import argparse 
+import argparse
 
 import pandas
 
@@ -11,8 +11,8 @@ import pandas
 def get_elevation(lat, lng):
     """
     Get the elevation at point (lat,lng) using the currently opened interface
-    :param lat: 
-    :param lng: 
+    :param lat:
+    :param lng:
     :return:
     """
     try:
