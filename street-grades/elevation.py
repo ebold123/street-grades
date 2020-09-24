@@ -1,3 +1,4 @@
+# This GDAL info to read raster files is borrowed via GPLv2 from https://github.com/Jorl17/open-elevation
 import gdal, osr
 from lazy import lazy
 from pprint import pprint
@@ -6,7 +7,27 @@ from os.path import isfile, join
 import json
 from rtree import index
 
-# Originally based on https://stackoverflow.com/questions/13439357/extract-point-from-raster-in-gdal
+
+class ElevationData:
+    def __init__(self, data_input_path="data/"):
+        self.interface = GDALTileInterface("data/", "data/summary.json")
+        self.interface.create_summary_json()
+
+    def get_elevation(self, lat, lng):
+        """
+        Get the elevation at point (lat,lng) using the currently opened interface
+        :param lat:
+        :param lng:
+        :return:
+        """
+        try:
+            elevation = self.interface.lookup(lat, lng)
+        except:
+            return None
+
+        return elevation
+
+
 class GDALInterface(object):
     SEA_LEVEL = 0
 

@@ -1,36 +1,13 @@
 import json
-
-from gdal_interfaces import GDALTileInterface
-
 import argparse
-
 import pandas
-
-
-def get_elevation(lat, lng):
-    """
-    Get the elevation at point (lat,lng) using the currently opened interface
-    :param lat:
-    :param lng:
-    :return:
-    """
-    try:
-        elevation = interface.lookup(lat, lng)
-    except:
-        return None
-
-    return elevation
+from elevation import ElevationData
 
 
 def main():
-    """
-    Initialize a global interface. This can grow quite large, because it has a cache.
-    """
-    global interface
-    interface = GDALTileInterface("data/", "data/summary.json")
-    interface.create_summary_json()
-
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        "Merges an OSM road network with elevation data to produce grade data."
+    )
     parser.add_argument(
         "--edges_csv",
         help="Path to CSV file of edges, from osmnet. Must have from_lat, from_lng, to_lat, to_lng",
@@ -38,12 +15,14 @@ def main():
     parser.add_argument("--latlng", nargs="*", help="lat", default=[])
     args = parser.parse_args()
 
+    elevation_data = ElevationData()
+
     if args.latlng:
         lat = float(args.latlng[0])
         lng = float(args.latlng[1])
 
         print("{}, {}".format(lat, lng))
-        print("{}".format(get_elevation(lat, lng)))
+        print("{}".format(elevation_data.get_elevation(lat, lng)))
 
     elif args.edges_csv:
         print(f"Read CSV from {args.edges_csv}")
@@ -54,8 +33,12 @@ def main():
         grades = []
         grades2 = []
         for idx, row in edges.iterrows():
-            from_elevation.append(get_elevation(row["from_lat"], row["from_lng"]))
-            to_elevation.append(get_elevation(row["to_lat"], row["to_lng"]))
+            from_elevation.append(
+                elevation_data.get_elevation(row["from_lat"], row["from_lng"])
+            )
+            to_elevation.append(
+                elevation_data.get_elevation(row["to_lat"], row["to_lng"])
+            )
 
             grades.append(
                 round(
