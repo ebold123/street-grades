@@ -15,7 +15,7 @@ def main():
     parser.add_argument("--latlng", nargs="*", help="lat", default=[])
     args = parser.parse_args()
 
-    elevation_data = ElevationData()
+    elevation_data = ElevationData("data")
 
     if args.latlng:
         lat = float(args.latlng[0])

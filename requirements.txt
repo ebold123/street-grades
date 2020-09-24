@@ -4,3 +4,5 @@ bottle==0.12.13
 rtree==0.8.3
 geopy
 pre-commit
+osmnet
+geopy

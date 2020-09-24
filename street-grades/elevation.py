@@ -1,4 +1,7 @@
-# This GDAL info to read raster files is borrowed via GPLv2 from https://github.com/Jorl17/open-elevation
+#
+# This GDAL reading code is borrowed via GPLv2 from https://github.com/Jorl17/open-elevation
+#
+
 import gdal, osr
 from lazy import lazy
 from pprint import pprint
@@ -9,16 +12,16 @@ from rtree import index
 
 
 class ElevationData:
-    def __init__(self, data_input_path="data/"):
-        self.interface = GDALTileInterface("data/", "data/summary.json")
+    def __init__(self, data_path="data/"):
+        """
+        data_path contains geotiff elevation files
+        """
+        self.interface = GDALTileInterface(data_path, join(data_path, "summary.json"))
         self.interface.create_summary_json()
 
-    def get_elevation(self, lat, lng):
+    def get_elevation(self, lat: float, lng: float) -> float:
         """
         Get the elevation at point (lat,lng) using the currently opened interface
-        :param lat:
-        :param lng:
-        :return:
         """
         try:
             elevation = self.interface.lookup(lat, lng)
