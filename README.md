@@ -3,9 +3,9 @@ Find out how steep any street in the world is. This is a tool designed for cycli
 
 # setup
 Mac setup:
-- brew install gdal
-- mkvirtualenv # Or setup your own venv
-- pip install -r requirements.txt
+- `brew install gdal`
+- `mkvirtualenv` # Or setup your own python env, however you please.
+- `pip install -r requirements.txt`
 
 # get yer data
 You'll need elevation data, and street map data to run. Luckily the osmnet python module handles all of the OSM work - we specify a bounding box, and it downloads all of the OSM road network within that box. But you have to do extra work to obtain the elevation dataset.
@@ -20,14 +20,14 @@ The USGS datasets also seem to recognize building height as elevation. Downtown 
 Your downloaded data should be in hgt or tif format. Put it in data/ dir under this path. The scripts below will, by default, look in data/ for downloaded elevation raster data.
 
 # run
-- python street_grades/find_intersections.py \<region name\>
-Ex: % python street-grades/find_intersections.py kirkland
-- Outputs cached street data in /tmp/\<region name\>
-    - Outputs street intersections to /tmp/\<region name\>/intersections_with_coordinates.csv
-    - The output csv has a row per "block", with the endpoint coordinates of each intersection at the ends of that "block".
+- `python street_grades/find_intersections.py <region name>`; where <region name> is some hardcoded city area in find_intersections.py.
+    - Or: `python street-grades/find_intersections.py kirkland`
+- This generates street data in `/tmp/<region name>`
+    - Outputs street intersections to /tmp/<region name>/intersections_with_coordinates.csv
+    - The output csv has a row street, with the endpoint coordinates of each intersection at the ends of that block. 
 
-- python street_grades/grades --edges_csv \<street intersections data\>
-Ex: % python street-grades/grades.py --edges_csv /tmp/kirkland/edges_with_coordinates.csv
+- `python street_grades/grades --edges_csv \<street intersections data\>`
+Ex: `python street-grades/grades.py --edges_csv /tmp/kirkland/edges_with_coordinates.csv`
     - Outputs /tmp/e3.csv with a row per "block", the endpoint coordinates of that block; and the elevations at each end of the block, and the grade of the street.
 
 # visualize
@@ -37,6 +37,12 @@ Ex: % python street-grades/grades.py --edges_csv /tmp/kirkland/edges_with_coordi
 - Or coloring edges by "grade"
 - Or coloring edges by "grade_category"
 
+# Known bugs & Shortcomings
+I'm not going to be unemployed forever, and that means there's a bunch of stuff that just won't look right when you run this code.
+- We use OSM edges & nodes. These are not conceptually the same as a city block, or a street. It would be great to merge adjacent edges into logical "city blocks" when appopriate.
+- Sometimes an OSM segment is just a few meters wrong, and we output ridiculous grades.
+- 30m elevation data isn't too accurate, since we often look at grades on streets that are just 100-200m long. Being 30m off can generate some less accurate grades.
 
 # Credit
-Thanks to open-elevation project for the concisce GDAL raster code. https://github.com/Jorl17/open-elevation
+- Thanks to open-elevation project for the concisce GDAL raster code. https://github.com/Jorl17/open-elevation
+- Inspired by the SF grade map that I use for all my bike rides: http://hillmapper.com/
