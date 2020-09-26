@@ -61,8 +61,8 @@ WHERE = {
         "ll_max": (37.806875, -122.537718),
     },
     "kirkland": {
-        "ll_min": (47.7384, -122.1950),
-        "ll_max": (47.7118, -122.1654),
+        "ll_min": (47.6740, -122.1444),
+        "ll_max": (47.7654, -122.2575),
     },
 }
 
@@ -112,7 +112,7 @@ def main():
         f"Eliminated {orig_size-nonroad_removed_size} non-road edges form original total of {orig_size}."
     )
 
-    nodes_df.reset_index()
+    # nodes_df.reset_index()
     edges_df = join_lat_lng(nodes_df, edges_df)
 
     out_filename = os.path.join(write_data_path, "edges_with_coordinates.csv")
