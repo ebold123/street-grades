@@ -22,13 +22,13 @@ Your downloaded data should be in hgt or tif format. Put it in data/ dir under t
 # run
 - python street_grades/find_intersections.py \<region name\>
 Ex: % python street-grades/find_intersections.py kirkland
--- Outputs cached street data in /tmp/\<region name\>
-    -- Outputs street intersections to /tmp/\<region name\>/intersections_with_coordinates.csv
-    -- The output csv has a row per "block", with the endpoint coordinates of each intersection at the ends of that "block".
+- Outputs cached street data in /tmp/\<region name\>
+    - Outputs street intersections to /tmp/\<region name\>/intersections_with_coordinates.csv
+    - The output csv has a row per "block", with the endpoint coordinates of each intersection at the ends of that "block".
 
 - python street_grades/grades --edges_csv \<street intersections data\>
 Ex: % python street-grades/grades.py --edges_csv /tmp/kirkland/edges_with_coordinates.csv
-    -- Outputs /tmp/e3.csv with a row per "block", the endpoint coordinates of that block; and the elevations at each end of the block, and the grade of the street.
+    - Outputs /tmp/e3.csv with a row per "block", the endpoint coordinates of that block; and the elevations at each end of the block, and the grade of the street.
 
 # visualize
 - Take your browser to kepler.gl
