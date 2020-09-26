@@ -5,6 +5,21 @@ import argparse
 from geopy.distance import distance
 import os
 
+WHERE = {
+    "sf": {
+        "ll_min": (37.708052, -122.341117),
+        "ll_max": (37.806875, -122.537718),
+    },
+    "kirkland": {
+        "ll_min": (47.6740, -122.1444),
+        "ll_max": (47.7654, -122.2575),
+    },
+    "sfpeninsula": {
+        "ll_min": (37.5, -122.47),
+        "ll_max": (37.2, -121.95),
+    },
+}
+
 
 def get_cached_edges_nodes(data_path: str) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     try:
@@ -55,17 +70,6 @@ def join_lat_lng(
     return df
 
 
-WHERE = {
-    "sf": {
-        "ll_min": (37.708052, -122.341117),
-        "ll_max": (37.806875, -122.537718),
-    },
-    "kirkland": {
-        "ll_min": (47.6740, -122.1444),
-        "ll_max": (47.7654, -122.2575),
-    },
-}
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -75,7 +79,7 @@ def main():
         help="Download SRTM data; even if a cache is available on local disk",
     )
     parser.add_argument(
-        "where", choices=["kirkland", "sf"], help="Specify the location to download."
+        "where", choices=WHERE.keys(), help="Specify the location to download."
     )
     args = parser.parse_args()
 
