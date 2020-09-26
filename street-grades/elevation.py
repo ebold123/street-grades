@@ -26,7 +26,8 @@ class ElevationData:
         try:
             elevation = self.interface.lookup(lat, lng)
         except:
-            return None
+            print(f"Raising with lat={lat} and lng={lng}")
+            raise
 
         return elevation
 
@@ -154,7 +155,7 @@ class GDALTileInterface(object):
             f
             for f in listdir(self.tiles_folder)
             if isfile(join(self.tiles_folder, f))
-            and (f.endswith(u".tif") or f.endswith(u".hgt"))
+            and (f.endswith(".tif") or f.endswith(".hgt"))
         ]
 
     def create_summary_json(self):
