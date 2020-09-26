@@ -1,5 +1,5 @@
 # street-grades
-Find out how steep any street in the world is. This is a tool designed for cyclists and runners, to help you pick the hilliest (or flattest) routes. It works by joining OSM road networks with elevation data, and using the (distance / elevation difference) to calculate grades.
+Find out how steep any street in the world is. This is a tool designed for cyclists and runners, to help you pick the hilliest (or flattest) routes. It works by joining OSM road networks with elevation data, and uses a "distance over elevation change" formula to calculate grades.
 
 # setup
 Mac setup:
