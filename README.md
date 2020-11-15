@@ -8,16 +8,15 @@ Mac setup:
 - `pip install -r requirements.txt`
 
 # get yer data
-You'll need elevation data, and street map data to run. Luckily the osmnet python module handles all of the OSM work - we specify a bounding box, and it downloads all of the OSM road network within that box. But you have to do extra work to obtain the elevation dataset.
+## You'll need elevation data. You must download geotiff files yourself.
+I get mine here: https://dds.cr.usgs.gov/srtm/version2_1/SRTM1/Region_04/
 
 There are a few elevation datasets out there. Thanks to the US Government for creating and providing them. In general, you should prefer "1m" data over "30m" data; and "30m" data over "90m" data. The average city block (in San Francisco) is around 150m. When your elevation data is accurate to 30m, and elevation changes rapidly, that results in some inaccurate readings.
 
-The USGS datasets also seem to recognize building height as elevation. Downtown San Francisco is full of incorrectly labeled steep streets.
-
-- 30m blah blah from usgs.gov
-- 1m blah blah from DEM
-
 Your downloaded data should be in hgt or tif format. Put it in data/ dir under this path. The scripts below will, by default, look in data/ for downloaded elevation raster data.
+
+## The script downloads the street data. You don't need to manually download street data.
+Luckily the osmnet python module handles all of the OSM work - we specify a bounding box, and it downloads all of the OSM road network within that box. But you have to do extra work to obtain the elevation dataset.
 
 # run
 - `python street_grades/find_intersections.py <region name>`; where <region name> is some hardcoded city area in find_intersections.py.
@@ -42,6 +41,8 @@ I'm not going to be unemployed forever, and that means there's a bunch of stuff 
 - We use OSM edges & nodes. These are not conceptually the same as a city block, or a street. It would be great to merge adjacent edges into logical "city blocks" when appopriate.
 - Sometimes an OSM segment is just a few meters wrong, and we output ridiculous grades.
 - 30m elevation data isn't too accurate, since we often look at grades on streets that are just 100-200m long. Being 30m off can generate some less accurate grades.
+- The USGS SRTM datasets also seem to recognize building height as elevation. Downtown San Francisco is full of incorrectly labeled steep streets.
+
 
 # Credit
 - Thanks to open-elevation project for the concisce GDAL raster code. https://github.com/Jorl17/open-elevation
