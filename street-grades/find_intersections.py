@@ -20,6 +20,22 @@ WHERE = {
     },
 }
 
+OUTPUT_CSV_COLUMNS = [
+    "from",
+    "to",
+    "distance",
+    "name",
+    "highway",
+    "service",
+    "bridge",
+    "tunnel",
+    "access",
+    "from_lat",
+    "from_lng",
+    "to_lat",
+    "to_lng",
+]
+
 
 def get_cached_edges_nodes(data_path: str) -> Tuple[pandas.DataFrame, pandas.DataFrame]:
     try:
@@ -49,30 +65,16 @@ def join_lat_lng(
     df = df.merge(nodes_df, left_on="to", right_on="id")
     df = df.rename(columns={"x": "to_lng", "y": "to_lat"})
 
-    keep_columns_named = [
-        "from",
-        "to",
-        "distance",
-        "name",
-        "highway",
-        "service",
-        "bridge",
-        "tunnel",
-        "access",
-        "from_lat",
-        "from_lng",
-        "to_lat",
-        "to_lng",
-    ]
-
-    df = df.filter(keep_columns_named)
+    df = df.filter(OUTPUT_CSV_COLUMNS)
 
     return df
 
 
-
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        description=f"Download OSM data for a geographical region, "
+        f"and output a CSV of the road segments therein. The output CSV contains columns {', '.join(OUTPUT_CSV_COLUMNS)}"
+    )
     parser.add_argument(
         "--nocache",
         action="store_true",
