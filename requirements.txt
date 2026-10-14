@@ -1,8 +1,7 @@
-lazy==1.3
-GDAL==2.1.3
-bottle==0.12.13
-rtree==0.8.3
+# GDAL is installed separately (see README) so its version matches Homebrew's libgdal.
+lazy
+bottle
+rtree
 geopy
 pre-commit
 osmnet
-geopy

@@ -2,7 +2,7 @@
 # This GDAL reading code is borrowed via GPLv2 from https://github.com/Jorl17/open-elevation
 #
 
-import gdal, osr
+from osgeo import gdal, osr
 from lazy import lazy
 from pprint import pprint
 from os import listdir
