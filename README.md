@@ -3,8 +3,13 @@ Find out how steep any street in the world is. This is a tool designed for cycli
 
 # setup
 Mac setup:
-- `brew install gdal`
-- `mkvirtualenv` # Or setup your own python env, however you please.
+- Install [Homebrew](https://brew.sh) if you don't have it.
+- `brew install python gdal`
+- Create and activate a virtual environment. macOS doesn't ship `pip` or `python` commands (only `pip3`/`python3`), and Homebrew's Python won't let you `pip install` packages globally. Inside the venv, `pip` and `python` work.
+    - `python3 -m venv .venv`
+    - `source .venv/bin/activate` # Run this again in every new terminal before using the scripts.
+- `pip install --upgrade pip`
+- `pip install "GDAL==$(gdal-config --version)"` # The GDAL Python package version must match the GDAL library installed by brew.
 - `pip install -r requirements.txt`
 
 # get yer data
