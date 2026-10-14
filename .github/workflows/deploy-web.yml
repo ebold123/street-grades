@@ -1,0 +1,117 @@
+name: Deploy web to GitHub Pages
+
+# Builds the street-grades viewer in web/ and publishes it to GitHub Pages.
+#   - Pull requests: run the tests and build everything, but do not deploy.
+#   - Pushes to main: build, then deploy.
+#   - Manual runs (Actions tab > Run workflow): same as a push to main.
+#
+# One-time setup: Settings > Pages > Build and deployment > Source: "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "web/**"
+      - ".github/workflows/deploy-web.yml"
+  pull_request:
+    paths:
+      - "web/**"
+      - ".github/workflows/deploy-web.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A newer push supersedes an older build of the same ref. Deployments are serialized
+# separately, in the deploy job below.
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Regions to build into the site, space separated. Names come from web/pipeline/regions.js.
+  REGIONS: sf
+  # Refuse to publish a region that came out smaller than this many blocks...
+  MIN_BLOCKS: "500"
+  # ...or where more than this fraction of blocks have no elevation.
+  MAX_NO_ELEVATION: "0.05"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - run: npm ci
+
+      - run: npm test
+
+      # OSM roads and elevation tiles are cached so repeat builds don't hit Overpass again.
+      # The month in the key refreshes the data about once a month.
+      - name: Month stamp for the data cache
+        id: month
+        run: echo "value=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: web/.cache
+          key: street-data-${{ env.REGIONS }}-${{ steps.month.outputs.value }}-${{ hashFiles('web/pipeline/regions.js') }}
+
+      - name: Build street grade data
+        run: |
+          for region in $REGIONS; do
+            npm run data -- "$region"
+          done
+
+      - name: Check the data before publishing it
+        run: |
+          for region in $REGIONS; do
+            node -e '
+              const [id, minBlocks, maxNoElevation] = process.argv.slice(1);
+              const meta = require(`./public/data/${id}.meta.json`);
+              const { blocks, flagged, medianGrade, p95Grade } = meta.stats;
+              console.log(`::notice title=${meta.name}::${blocks} blocks, median grade ${medianGrade}%, 95th percentile ${p95Grade}%, flagged ${flagged.short} short / ${flagged.extreme} extreme / ${flagged.no_elevation} no elevation`);
+              const problems = [];
+              if (blocks < Number(minBlocks)) problems.push(`only ${blocks} blocks (expected at least ${minBlocks})`);
+              if (flagged.no_elevation > blocks * Number(maxNoElevation)) problems.push(`${flagged.no_elevation} of ${blocks} blocks have no elevation`);
+              if (problems.length) {
+                console.log(`::error title=${meta.name} data looks wrong::${problems.join("; ")}`);
+                process.exit(1);
+              }
+            ' "$region" "$MIN_BLOCKS" "$MAX_NO_ELEVATION"
+          done
+
+      - name: Build the site
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: web/dist
+
+  deploy:
+    # Pull requests only get the build above.
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

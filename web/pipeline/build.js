@@ -85,7 +85,7 @@ async function main() {
   log(`Region: ${label} [${bbox.join(", ")}]`);
   const ways = values.fixture
     ? fixtureWays()
-    : await fetchWays(bbox, { cacheFile: path.join(values.cache, "osm", `${id}.json`) });
+    : await fetchWays(bbox, { cacheFile: path.join(values.cache, "osm", `${id}.json`), log });
 
   const dem = new TerrainDem({
     zoom,
