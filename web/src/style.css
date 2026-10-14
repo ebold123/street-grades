@@ -1,0 +1,197 @@
+:root {
+  --bg: #ffffff;
+  --fg: #1f2328;
+  --muted: #59636e;
+  --line: #d1d9e0;
+  --accent: #3a0ca3;
+  --warn-bg: #fff4d6;
+  --warn-fg: #6b4e00;
+  --err-bg: #ffe5e3;
+  --err-fg: #8a1a12;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1f24;
+    --fg: #e6edf3;
+    --muted: #9198a1;
+    --line: #3d444d;
+    --accent: #b8a1ff;
+    --warn-bg: #3b2f0a;
+    --warn-fg: #f2d68a;
+    --err-bg: #4a1714;
+    --err-fg: #ffb4ab;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+}
+
+#map {
+  position: absolute;
+  inset: 0;
+}
+
+#panel {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  width: min(300px, calc(100vw - 24px));
+  max-height: calc(100% - 24px);
+  overflow: auto;
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+}
+
+h1 {
+  margin: 0 0 2px;
+  font-size: 18px;
+}
+
+p {
+  margin: 4px 0;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.credit {
+  margin-top: 10px;
+  font-size: 11px;
+}
+
+.banner,
+.error {
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.banner {
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+}
+
+.error {
+  background: var(--err-bg);
+  color: var(--err-fg);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+details {
+  margin: 8px 0;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+fieldset {
+  margin: 8px 0;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  padding: 0;
+  color: var(--muted);
+}
+
+fieldset label,
+.check {
+  display: block;
+  padding: 2px 0;
+}
+
+.slider {
+  display: block;
+  margin-top: 8px;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.legend {
+  margin-top: 10px;
+}
+
+.ramp {
+  height: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+}
+
+.ticks {
+  position: relative;
+  height: 16px;
+  margin-top: 2px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.ticks span {
+  position: absolute;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.ticks span:first-child {
+  transform: none;
+}
+
+.ticks span:last-child {
+  transform: translateX(-100%);
+}
+
+/* Popup content */
+.maplibregl-popup-content {
+  color: #1f2328;
+  max-width: 260px;
+}
+
+.popup h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.popup p {
+  margin: 2px 0;
+}
+
+.popup .big {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.popup .note {
+  margin-top: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: #fff4d6;
+  color: #6b4e00;
+  font-size: 12px;
+}
+
+.popup a {
+  color: #3a0ca3;
+}

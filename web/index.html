@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Street Grades</title>
+    <meta
+      name="description"
+      content="How steep is every block? A map of street grades for cyclists and runners."
+    />
+  </head>
+  <body>
+    <div id="map" role="application" aria-label="Map of street grades"></div>
+
+    <aside id="panel">
+      <h1>Street grades</h1>
+      <p id="region" class="muted"></p>
+      <p id="banner" class="banner" role="status" hidden></p>
+      <p id="error" class="error" role="alert" hidden></p>
+
+      <details open>
+        <summary>Display</summary>
+
+        <fieldset>
+          <legend>Color blocks by</legend>
+          <label><input type="radio" name="metric" value="grade_abs" checked /> Net grade</label>
+          <label
+            ><input type="radio" name="metric" value="max_grade_abs" /> Steepest 20&nbsp;m</label
+          >
+        </fieldset>
+
+        <label class="slider" for="min-grade">
+          Hide blocks flatter than <output id="min-grade-out">0%</output>
+        </label>
+        <input id="min-grade" type="range" min="0" max="25" step="1" value="0" />
+
+        <label class="check">
+          <input id="show-flagged" type="checkbox" checked /> Show unreliable blocks (dashed)
+        </label>
+      </details>
+
+      <div class="legend" aria-label="Grade color scale">
+        <div id="ramp" class="ramp"></div>
+        <div id="ticks" class="ticks"></div>
+      </div>
+
+      <p class="credit muted">
+        Roads &copy; OpenStreetMap contributors. Elevation from AWS Open Data Terrain Tiles (USGS
+        3DEP, SRTM and other sources).
+      </p>
+    </aside>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
