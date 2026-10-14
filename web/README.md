@@ -92,6 +92,40 @@ falls back to a plain background so the grades stay visible.
 
 `public/data` and `.cache` are git-ignored. Generated data is not committed.
 
+## Deploying to GitHub Pages
+
+`.github/workflows/deploy-web.yml` publishes the site automatically. The generated data isn't
+committed, so the workflow builds it each time:
+
+1. Runs the tests.
+2. Runs `npm run data` for each region in the workflow's `REGIONS` setting (default `sf`),
+   downloading roads from Overpass and elevation tiles from AWS. Overpass requests are retried
+   with a growing delay, since shared CI machines are sometimes throttled.
+3. Refuses to publish a region that looks wrong: fewer than `MIN_BLOCKS` blocks, or more than
+   `MAX_NO_ELEVATION` of them without elevation.
+4. Builds the site and publishes it.
+
+| Event | What happens |
+|---|---|
+| Pull request touching `web/` | Steps 1 to 4 run, but nothing is published |
+| Push to `main` touching `web/` | Steps 1 to 4, then deploy |
+| Actions tab > "Deploy web to GitHub Pages" > Run workflow | Same as a push to `main` |
+
+**One-time setup:** in the repository, go to Settings > Pages > Build and deployment and set
+Source to **GitHub Actions**. Until that is set the deploy step fails with a "Pages not
+enabled" message. The site is then served at `https://<owner>.github.io/<repo>/`, with
+`?region=<id>` choosing the region.
+
+Downloads are cached for a month (the cache key includes the year and month), so most builds
+don't touch Overpass at all. To refresh the data sooner, delete the cache under
+Actions > Caches and rerun. To add a region, add it to `pipeline/regions.js` and to `REGIONS`
+in the workflow.
+
+The site uses relative paths throughout, so it works under any sub-path. The workflow
+publishes GeoJSON, which is fine for a city. For a much larger region, build a PMTiles file
+(see "Precomputing and hosting" above), host it where you like, and set `VITE_PMTILES_URL` for
+the build step.
+
 ## Tests
 
 ```sh
