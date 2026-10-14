@@ -1,6 +1,9 @@
 # street-grades
 Find out how steep any street in the world is. This is a tool designed for cyclists and runners, to help you pick the hilliest (or flattest) routes. It works by joining OSM road networks with elevation data, and uses a "distance over elevation change" formula to calculate grades.
 
+# web version (experimental)
+There is also a JavaScript version in [`web/`](web/README.md): a Node pipeline that needs no GDAL or manual elevation downloads, and a MapLibre map you can host as a static site. It lives alongside the Python code below and doesn't replace it.
+
 # setup
 Mac setup:
 - Install [Homebrew](https://brew.sh) if you don't have it.
