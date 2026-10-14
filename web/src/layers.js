@@ -12,6 +12,8 @@ export const STOPS = [
   [30, "#3a0ca3"],
 ];
 export const MAX_STOP = STOPS[STOPS.length - 1][0];
+// Legend labels. Fewer than STOPS: the 0% and 3% labels would overlap on a narrow ramp.
+export const LEGEND_TICKS = [0, 6, 10, 15, 20, 30];
 export const FLAGGED_COLOR = "#7a7f87";
 
 export const SOURCE_ID = "streets";

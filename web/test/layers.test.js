@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { validateStyleMin } from "@maplibre/maplibre-gl-style-spec";
-import { MAX_STOP, okFilter, STOPS, streetLayers } from "../src/layers.js";
+import { LEGEND_TICKS, MAX_STOP, okFilter, STOPS, streetLayers } from "../src/layers.js";
 
 const sourceFor = (vector) =>
   vector
@@ -42,6 +42,16 @@ test("color stops are ascending and the legend maximum matches the last stop", (
   const values = STOPS.map(([v]) => v);
   assert.deepEqual(values, [...values].sort((a, b) => a - b));
   assert.equal(MAX_STOP, values.at(-1));
+});
+
+test("legend ticks stay within the ramp and far enough apart not to overlap", () => {
+  assert.equal(LEGEND_TICKS[0], 0);
+  assert.equal(LEGEND_TICKS.at(-1), MAX_STOP);
+  for (let i = 1; i < LEGEND_TICKS.length; i++) {
+    // A 268 px ramp gives 8.9 px per percentage point; labels are about 30 px wide,
+    // so 4 points (36 px) is the minimum gap that keeps them apart.
+    assert.ok(LEGEND_TICKS[i] - LEGEND_TICKS[i - 1] >= 4, `ticks ${i - 1} and ${i}`);
+  }
 });
 
 test("the unflagged filter excludes flagged blocks and applies the threshold", () => {

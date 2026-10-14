@@ -4,12 +4,19 @@ import {
   NavigationControl,
   Popup,
   ScaleControl,
+  setWorkerUrl,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+// MapLibre 6 finds its web worker with `new URL("./maplibre-gl-worker.mjs", import.meta.url)`.
+// A bundler moves the main file, so that sibling path breaks: Vite's dev server answers 504
+// and `vite build` doesn't emit the worker at all. The map then draws no tiles and no
+// streets. Give it the worker's URL explicitly instead.
+import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import { Protocol } from "pmtiles";
 import {
   colorExpression,
   flaggedFilter,
+  LEGEND_TICKS,
   MAX_STOP,
   okFilter,
   SOURCE_ID,
@@ -18,6 +25,8 @@ import {
 } from "./layers.js";
 import { popupContent } from "./popup.js";
 import "./style.css";
+
+setWorkerUrl(workerUrl);
 
 // ---- Configuration -------------------------------------------------------
 // Build-time env vars:
@@ -49,7 +58,7 @@ function buildLegend() {
   const gradient = STOPS.map(([v, c]) => `${c} ${(v / MAX_STOP) * 100}%`).join(", ");
   $("ramp").style.background = `linear-gradient(to right, ${gradient})`;
   const ticks = $("ticks");
-  for (const [v] of STOPS) {
+  for (const v of LEGEND_TICKS) {
     const tick = document.createElement("span");
     tick.style.left = `${(v / MAX_STOP) * 100}%`;
     tick.textContent = v === MAX_STOP ? `${v}%+` : `${v}%`;
