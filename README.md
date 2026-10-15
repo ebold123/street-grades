@@ -52,6 +52,10 @@ I'm not going to be unemployed forever, and that means there's a bunch of stuff 
 - The USGS SRTM datasets also seem to recognize building height as elevation. Downtown San Francisco is full of incorrectly labeled steep streets.
 
 
+# See also
+- [SF Public Works street key map](https://bsm.sfdpw.org/subdivision/keymap/): the city's official map of San Francisco streets and subdivisions.
+- [Hillmapper](http://hillmapper.com/): a map of street grades in San Francisco.
+
 # Credit
 - Thanks to open-elevation project for the concisce GDAL raster code. https://github.com/Jorl17/open-elevation
 - Inspired by the SF grade map that I use for all my bike rides: http://hillmapper.com/
