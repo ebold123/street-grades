@@ -59,10 +59,12 @@ To add a region, add it to `web/pipeline/regions.js` and to `REGIONS` in the wor
 
 # Accuracy
 
+All grades presented here may be several % off from reality.
+
 The grades are estimates, and they have not been checked against surveyed ground truth. Only the math is verified: tests on a synthetic hill recover the exact grade, so the errors that remain come from the inputs. Elevation is the weak point. The terrain tiles blend several sources, mainly USGS 3DEP in the US, and at the zoom used here a pixel is about 7 m across in San Francisco. Their vertical error is probably around a meter or two. That is small on a long block (about 1 to 2 percentage points on a 100 m block) but large on a short one (5 to 10 points on a 20 m block), which is why blocks under 20 m are flagged. Smoothing a coarse surface also flattens sharp changes, so very steep streets tend to read low, and elevation sources that include building heights can distort grades downtown. Road positions from OSM are usually good to a few meters, but a misplaced node samples the wrong pixel, and a street that runs along a slope can be measured on the wrong side of it. Bridges, tunnels and retaining walls are only approximated. Treat any single block's number as roughly right, trust trends over a few blocks more than one reading, and spot-check streets you know.
 
 # See also
-- [SF Public Works street key map](https://bsm.sfdpw.org/subdivision/keymap/): the city's official map of San Francisco streets and subdivisions.
+- [SF Public Works street key map](https://bsm.sfdpw.org/subdivision/keymap/): the city's official map of San Francisco streets and subdivisions. It includes surveyor-measured street grades, which often differ significantly from this app's estimates.
 - [Hillmapper](http://hillmapper.com/): a map of street grades in San Francisco.
 
 # Credit
